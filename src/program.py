@@ -72,9 +72,13 @@ def print_complex(nr):
     :param nr: Parameter that will be written
     :return:
     """
-    if nr[1] > 0:
+    if nr[1] == 0:
+        print(str(get_realp(nr)))
+    elif nr[0] == 0:
+        print(str(get_imagp(nr)) + 'i')
+    elif nr[1] > 0:
         print(str(get_realp(nr)) + " + " + str(get_imagp(nr)) + 'i')
-    else:
+    elif nr[1] < 0:
         print(str(get_realp(nr)) + " - " + str(-get_imagp(nr)) + 'i')
 
 
@@ -133,6 +137,7 @@ def start():
     """
 
     list_complex = [[1, -2], [4, -2], [1, 8], [8, 9], [10, 2], [4, -1], [4, 4], [1, 3], [9, -2], [14, 24]]
+    list_complex = [[1, +3], [2, -1], [3, +3], [4, -1], [10, 2], [4, -1], [3, 4], [2, 3], [1, -2], [0, 24]]
 
     # Command input
     while 1:
@@ -160,17 +165,41 @@ def start():
             print(tgreen + "\nThe list of complex numbers is:" + endc)
             print_list(list_complex)
         if command == 3:
-            pass
+            print_seq9(list_complex)
         if command == 4:
-            pass
+            print_seq11(list_complex)
 
         print("\n")
 
 
-#
-#
-#
+#UI - Sequences
 
+def print_seq9(list_complex):
+    rez = detseq9(list_complex)
+
+    start = rez[0]
+    end = rez[0] + rez[1]
+
+    print(tgreen + "\nThe longest sequence of complex numbers that are of equal sums begins at "
+          + str(start) + " and ends at " + str(end) + " (length = " + str(end - start + 1) + ")", endc)
+    for x in range(start, end + 1):
+        print_complex(list_complex[x])
+
+
+def print_seq11(list_complex):
+    rez = detseq11(list_complex)
+
+    start = rez[0]
+    end = rez[0] + rez[1] - 1
+
+    print(tgreen + "\nThe longest sequence of complex numbers whose real parts are of the form of a mountain begins at "
+          + str(start) + " and ends at " + str(end) + " (length = " + str(end - start + 1) + ")", endc)
+    for x in range(start, end + 1):
+        print_complex(list_complex[x])
+
+#
+#
+#
 
 # Function section
 # (write all non-UI functions in this section)
@@ -233,7 +262,94 @@ def get_imagp(nr):
 # Functions regarding the determination of certain sequences
 #
 
+def detseq9(list_complex):
+    """
+    Determines the beginning index and the length of
+    the longest sequence that has property 9
+    """
+    length = len(list_complex)
+    li_index_len = [0, 0]
+    lseqmax = 0
 
+    for index in range(0, length):
+        l = lengthseq9(list_complex, index)
+
+        if l > lseqmax:
+            lseqmax = l
+            li_index_len = [index, lseqmax]
+
+    return li_index_len
+
+
+def lengthseq9(list_complex, ind):
+    """
+    Determines the longest sequence of elements that have
+    property 9, beginning from 'index'
+    """
+    length = len(list_complex)
+
+    lseq = 0
+    lseqmax = 0
+
+    for x in range(ind, length - 1):
+        if list_complex[x][0] + list_complex[x + 1][0] == list_complex[x][1] + list_complex[x + 1][1]:
+            y = x + 1
+            lseq = 2
+            while y + 1 < length and list_complex[y][0] + list_complex[y + 1][0] == list_complex[y][1] + list_complex[y + 1][1]:
+                lseq += 1
+                y += 1
+
+            if lseq > lseqmax:
+                lseqmax = lseq
+
+    return lseqmax
+
+
+def detseq11(list_complex):
+    """
+    Determines the longest sequence of elements that
+    have property 11.
+    """
+    length = len(list_complex)
+    l_index_lsegmax = [0, 0]
+    index = 0
+    lseqmax = 0
+
+    for x in range(1, length - 2):
+        lseq = lengthmountain(list_complex, x)
+
+        if lseq[1] > lseqmax:
+            lseqmax = lseq[1]
+            index = lseq[0]
+
+    l_index_lseqmax = [index, lseqmax]
+
+    return l_index_lseqmax
+
+
+def lengthmountain(list_complex, index):
+    """
+    Determines the length and starting position of the longest
+    "mountain" sequence that has peaks at "index"
+    """
+
+    length = len(list_complex)
+
+    indr = index + 1
+    indl = index - 1
+
+    while indr < length and list_complex[indr - 1][0] > list_complex[indr][0]:
+        indr += 1
+
+    while indl >= 0 and list_complex[indl][0] < list_complex[indl + 1][0]:
+        indl -= 1
+
+    indl += 1
+    indr -= 1
+
+    l_index_length = [indl, indr - indl + 1]
+
+    return l_index_length
 
 #
 #
