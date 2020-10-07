@@ -330,6 +330,10 @@ def lengthmountain(list_complex, index):
     """
     Determines the length and starting position of the longest
     "mountain" sequence that has peaks at "index"
+
+    Takes two indices, indr (indright), and indl(indleft),
+    which iterate in opposite sides, as long as the mountain property
+    is preserved
     """
 
     length = len(list_complex)
